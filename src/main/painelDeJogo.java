@@ -29,7 +29,7 @@ public class painelDeJogo extends JPanel implements Runnable{
 
     controleDeComandos controle = new controleDeComandos();
     Thread gameThread;
-    player player = new player(this, controle);
+    public player player = new player(this, controle);
     public ArrayList<enemy> inimigos = new ArrayList();
 
     public void setupGame(){

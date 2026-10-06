@@ -31,6 +31,26 @@ public class player extends entity {
         loadFrame();
     }
 
+    private boolean encostouInimigo(int movimentoX, int movimentoY){
+        //Calcula onde a hitbox do player vai depois de se mover
+        Rectangle proximaHitbox = new Rectangle(
+            x + solidArea.x + movimentoX,
+            y + solidArea.y + movimentoY,
+            solidArea.width,
+            solidArea.height
+        );
+        // Verifica se a próxima posição da hitbox colide com algum obstáculo
+        // (Implementação da verificação de colisão)
+        for (enemy inimigo : gp.inimigos){
+            if (inimigo != null) {
+                if (proximaHitbox.intersects(inimigo.getHitBox())){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private void loadFrame() {
         try {
             defaultFrameDireita = ImageIO.read(getClass().getResourceAsStream("/player/Aveel_direita.png"));
@@ -75,15 +95,19 @@ public class player extends entity {
         }
 
         if (controle.esquerdaPressionado) {
-            x -= speed;
-            andando = true;
             olhandoParaEsquerda = true;
+            if (encostouInimigo(-speed, 0)) {
+                x -= speed;
+                andando = true;
+            }
         }
 
         if (controle.direitaPressionado) {
-            x += speed;
-            andando = true;
             olhandoParaEsquerda = false;
+            if (encostouInimigo(speed, 0)) {
+                x += speed;
+                andando = true;
+            }
         }
 
         // Atualiza os quadros da animação (método herdado de entity)

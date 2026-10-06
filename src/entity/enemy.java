@@ -13,6 +13,7 @@ public class enemy extends entity {
     public int limiteEsquerda;
     public int limiteDireita;
     public boolean movendoParaDireita = true;
+    public painelDeJogo gp;
 
 
     // CONSTRUTOR
@@ -22,15 +23,15 @@ public class enemy extends entity {
         int xInicial,
         int yInicial
     ) {
-
+        this.gp = gp;
         this.enemyId = enemyId;
 
         this.x = xInicial;
         this.y = yInicial;
 
         // Limite da patrulha
-        this.limiteEsquerda = xInicial - 100;
-        this.limiteDireita = xInicial + 100;
+        this.limiteEsquerda = xInicial - 200;
+        this.limiteDireita = xInicial + 200;
 
         // Configura o inimigo
         setupEnemyType();
@@ -57,10 +58,10 @@ public class enemy extends entity {
 
                     // Hitbox
                     solidArea = new Rectangle(
-                        20,
-                        20,
-                        56,
-                        76
+                        26,
+                        30,
+                        48,
+                        64
                     );
 
                     solidAreaDefaultX = solidArea.x;
@@ -72,7 +73,7 @@ public class enemy extends entity {
                     // --------------------------
 
                     File slimeParado = new File(
-                        "src/enemy/slime/slime.png"
+                        "RPG/src/enemy/slime/slime.png"
                     );
 
                     System.out.println(
@@ -93,7 +94,7 @@ public class enemy extends entity {
                     for (int i = 0; i < 8; i++) {
 
                         File frame = new File(
-                            "src/enemy/slime/slime_andando_"
+                            "RPG/src/enemy/slime/slime_andando_"
                             + (i + 1)
                             + ".png"
                         );
@@ -132,7 +133,7 @@ public class enemy extends entity {
                     // --------------------------
 
                     File esqueleto = new File(
-                        "src/enemy/Esqueleto.png"
+                        "RPG/src/enemy/Esqueleto.png"
                     );
 
                     System.out.println(
@@ -169,6 +170,22 @@ public class enemy extends entity {
         }
     }
 
+    private boolean encostouPlayer(int movimentoX, int movimentoY) {
+        // Calcula onde a hitbox do inimigo ficará
+        Rectangle proximaHitbox = new Rectangle(
+            x + solidArea.x + movimentoX,
+            y + solidArea.y + movimentoY,
+            solidArea.width,
+            solidArea.height
+        );
+
+        // Verifica colisão com o player
+        if (proximaHitbox.intersects(gp.player.getHitBox())) {
+            return true;
+        }
+
+        return false;
+    }
 
     // ==========================================
     // UPDATE
@@ -177,11 +194,11 @@ public class enemy extends entity {
 
         // Anda para a direita
         if (movendoParaDireita) {
-
-            x += speed;
-            andando = true;
             olhandoParaEsquerda = false;
-
+            if (!encostouPlayer(speed, 0)) {
+                x += speed;
+                andando = true;
+            }
             // Chegou no limite direito
             if (x >= limiteDireita) {
                 movendoParaDireita = false;
@@ -190,10 +207,12 @@ public class enemy extends entity {
 
         // Anda para a esquerda
         else {
-
-            x -= speed;
-            andando = true;
+            
             olhandoParaEsquerda = true;
+            if (!encostouPlayer(-speed, 0)) {
+                x -= speed;
+                andando = true;
+            }
 
             // Chegou no limite esquerdo
             if (x <= limiteEsquerda) {
