@@ -1,86 +1,207 @@
 package entity;
 
 import java.awt.Rectangle;
+import java.io.File;
 import javax.imageio.ImageIO;
 import main.painelDeJogo;
 
 public class enemy extends entity {
 
     public int enemyId;
-    
+
     // IA básica de patrulha
-    public int limiteEsquerda, limiteDireita;
+    public int limiteEsquerda;
+    public int limiteDireita;
     public boolean movendoParaDireita = true;
 
-    public enemy(painelDeJogo gp, int enemyId, int xInicial, int yInicial) {
+
+    // CONSTRUTOR
+    public enemy(
+        painelDeJogo gp,
+        int enemyId,
+        int xInicial,
+        int yInicial
+    ) {
+
         this.enemyId = enemyId;
+
         this.x = xInicial;
         this.y = yInicial;
 
-        // Limites de patrulha simples (100px para cada lado)
+        // Limite da patrulha
         this.limiteEsquerda = xInicial - 100;
         this.limiteDireita = xInicial + 100;
 
-        // Configura atributos e sprites de acordo com o ID
+        // Configura o inimigo
         setupEnemyType();
     }
 
+
+    // CONFIGURAÇÃO DOS TIPOS DE INIMIGO
     private void setupEnemyType() {
+
         try {
+
             switch (enemyId) {
-                case 1: // Exemplo: Inimigo Terrestre Padrão
+
+                // ==========================================
+                // SLIME
+                // ==========================================
+                case 1:
+
                     speed = 1;
-                    width = 96;  // Tamanho personalizado
+
+                    // Tamanho que aparecerá na tela
+                    width = 96;
                     height = 96;
-                    
-                    // Hitbox proporcional ao tamanho do sprite
-                    solidArea = new Rectangle(20, 20, 56, 76);
-                    
-                    spriteSheet = ImageIO.read(getClass().getResourceAsStream("/enemy/slime.png"));
+
+                    // Hitbox
+                    solidArea = new Rectangle(
+                        20,
+                        20,
+                        56,
+                        76
+                    );
+
+                    solidAreaDefaultX = solidArea.x;
+                    solidAreaDefaultY = solidArea.y;
+
+
+                    // --------------------------
+                    // SLIME PARADO
+                    // --------------------------
+
+                    File slimeParado = new File(
+                        "src/enemy/slime/slime.png"
+                    );
+
+                    System.out.println(
+                        "Slime parado: "
+                        + slimeParado.getAbsolutePath()
+                    );
+
+                    defaultFrameDireita =
+                        ImageIO.read(slimeParado);
+
+                    defaultFrameEsquerda =
+                        defaultFrameDireita;
+
+                    // --------------------------
+                    // SLIME ANDANDO
+                    // --------------------------
+
+                    for (int i = 0; i < 8; i++) {
+
+                        File frame = new File(
+                            "src/enemy/slime/slime_andando_"
+                            + (i + 1)
+                            + ".png"
+                        );
+
+                        walkingFrames[i] =
+                            ImageIO.read(frame);
+                    }
+
                     break;
 
-                case 2: // Exemplo: Inimigo Rápido/Menor
+
+                // ==========================================
+                // ESQUELETO
+                // ==========================================
+                case 2:
+
                     speed = 3;
+
                     width = 64;
                     height = 64;
-                    
-                    solidArea = new Rectangle(10, 10, 44, 54);
-                    
-                    spriteSheet = ImageIO.read(getClass().getResourceAsStream("/enemy/Esqueleto.png"));
+
+                    // Hitbox
+                    solidArea = new Rectangle(
+                        12,
+                        8,
+                        40,
+                        56
+                    );
+
+                    solidAreaDefaultX = solidArea.x;
+                    solidAreaDefaultY = solidArea.y;
+
+
+                    // --------------------------
+                    // ESQUELETO
+                    // --------------------------
+
+                    File esqueleto = new File(
+                        "src/enemy/Esqueleto.png"
+                    );
+
+                    System.out.println(
+                        "Esqueleto: "
+                        + esqueleto.getAbsolutePath()
+                    );
+
+                    System.out.println(
+                        "Existe? "
+                        + esqueleto.exists()
+                    );
+
+                    defaultFrameDireita =
+                        ImageIO.read(esqueleto);
+
+                    defaultFrameEsquerda =
+                        defaultFrameDireita;
+
+
+                    // Por enquanto o esqueleto não
+                    // possui animação separada.
+                    // Então repetimos a mesma imagem.
+                    for (int i = 0; i < 8; i++) {
+
+                        walkingFrames[i] =
+                            defaultFrameDireita;
+                    }
+
                     break;
             }
 
-            // Separa os quadros da animação (se o spritesheet foi carregado)
-            if (spriteSheet != null) {
-                for (int i = 0; i < 8; i++) {
-                    walkingFrames[i] = spriteSheet.getSubimage(i * 64, 0, 64, 64);
-                }
-            }
         } catch (Exception e) {
-            System.err.println("Erro ao carregar os sprites do inimigo ID: " + enemyId);
             e.printStackTrace();
         }
     }
 
+
+    // ==========================================
+    // UPDATE
+    // ==========================================
     public void update() {
-        // Movimentação de patrulha básica
+
+        // Anda para a direita
         if (movendoParaDireita) {
+
             x += speed;
             andando = true;
             olhandoParaEsquerda = false;
+
+            // Chegou no limite direito
             if (x >= limiteDireita) {
                 movendoParaDireita = false;
             }
-        } else {
+        }
+
+        // Anda para a esquerda
+        else {
+
             x -= speed;
             andando = true;
             olhandoParaEsquerda = true;
+
+            // Chegou no limite esquerdo
             if (x <= limiteEsquerda) {
                 movendoParaDireita = true;
             }
         }
 
-        // Atualiza animação herdada da classe entity
+        // Atualiza a animação
         updateAnimation();
     }
 }

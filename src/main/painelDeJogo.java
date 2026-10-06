@@ -1,9 +1,8 @@
 package main;
-import javax.swing.*;
-
 import entity.*;
-import java.util.ArrayList;
 import java.awt.*;
+import java.util.ArrayList;
+import javax.swing.*;
 
 public class painelDeJogo extends JPanel implements Runnable{
     public final int originalTileSize = 24; // 24x24 pixels
@@ -31,18 +30,20 @@ public class painelDeJogo extends JPanel implements Runnable{
     controleDeComandos controle = new controleDeComandos();
     Thread gameThread;
     player player = new player(this, controle);
-    ArrayList<enemy> inimigos = new ArrayList();
+    public ArrayList<enemy> inimigos = new ArrayList();
 
     public void setupGame(){
-        inimigos.add(new enemy(this, 1, yChao, yChao - 96));
+        enemy slime = new enemy(this, 1, 500, yChao - 96);
+        inimigos.add(slime);
     }
 
     public painelDeJogo(){
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        this.setBackground(Color.lightGray);
+        this.setBackground(Color.black);
         this.setDoubleBuffered(true);
         this.addKeyListener(controle);
         this.setFocusable(true);
+        setupGame();
     }
 
     public void startGameThread(){
