@@ -35,6 +35,9 @@ public class enemy extends entity {
 
         // Configura o inimigo
         setupEnemyType();
+
+        // Corrige posição inicial
+        normalizaHitbox();
     }
 
 
@@ -76,11 +79,6 @@ public class enemy extends entity {
                         "RPG/src/enemy/slime/slime.png"
                     );
 
-                    System.out.println(
-                        "Slime parado: "
-                        + slimeParado.getAbsolutePath()
-                    );
-
                     defaultFrameDireita =
                         ImageIO.read(slimeParado);
 
@@ -111,17 +109,17 @@ public class enemy extends entity {
                 // ==========================================
                 case 2:
 
-                    speed = 3;
+                    speed = 2;
 
-                    width = 64;
-                    height = 64;
+                    width = 128;
+                    height = 128;
 
                     // Hitbox
                     solidArea = new Rectangle(
-                        12,
-                        8,
-                        40,
-                        56
+                        50,
+                        20,
+                        30,
+                        105
                     );
 
                     solidAreaDefaultX = solidArea.x;
@@ -133,17 +131,11 @@ public class enemy extends entity {
                     // --------------------------
 
                     File esqueleto = new File(
-                        "RPG/src/enemy/Esqueleto.png"
+                        "RPG/src/enemy/Esqueleto/Esqueleto.png"
                     );
 
-                    System.out.println(
-                        "Esqueleto: "
-                        + esqueleto.getAbsolutePath()
-                    );
-
-                    System.out.println(
-                        "Existe? "
-                        + esqueleto.exists()
+                    File esqueletoAndando = new File(
+                        "RPG/src/enemy/Esqueleto/Esqueleto_andando_1.png"
                     );
 
                     defaultFrameDireita =
@@ -157,9 +149,8 @@ public class enemy extends entity {
                     // possui animação separada.
                     // Então repetimos a mesma imagem.
                     for (int i = 0; i < 8; i++) {
-
                         walkingFrames[i] =
-                            defaultFrameDireita;
+                            ImageIO.read(esqueletoAndando);
                     }
 
                     break;
@@ -185,6 +176,16 @@ public class enemy extends entity {
         }
 
         return false;
+    }
+
+    private void normalizaHitbox() {
+        // Parte mais baixa da hitbox do inimigo
+        int baseHitbox = y + solidArea.y + solidArea.height;
+
+        // Se a hitbox entrou no chão, sobe o inimigo
+        if (baseHitbox > gp.yChao) {
+            y = gp.yChao - solidArea.y - solidArea.height;
+        }
     }
 
     // ==========================================

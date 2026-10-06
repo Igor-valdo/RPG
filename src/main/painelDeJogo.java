@@ -35,6 +35,8 @@ public class painelDeJogo extends JPanel implements Runnable{
     public void setupGame(){
         enemy slime = new enemy(this, 1, 500, yChao - 96);
         inimigos.add(slime);
+        enemy esqueleto = new enemy(this, 2, 800, yChao - 96);
+        inimigos.add(esqueleto);
     }
 
     public painelDeJogo(){
