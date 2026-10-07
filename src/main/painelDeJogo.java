@@ -28,6 +28,7 @@ public class painelDeJogo extends JPanel implements Runnable{
     int playerSpeed = 3; // Velocidade do jogador
 
     controleDeComandos controle = new controleDeComandos();
+    public TileManager tileM = new TileManager(this);
     Thread gameThread;
     public player player = new player(this, controle);
     public ArrayList<enemy> inimigos = new ArrayList();
